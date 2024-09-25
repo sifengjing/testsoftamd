@@ -4,210 +4,52 @@ import Button from './ui/Button.astro';
 import Image from './common/Image.astro';
 import { config } from '../config';
 
-function simpleHash(input) {
-    let hash = 0;
-    for (let i = 0; i < input.length; i++) {
-        const char = input.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
-        hash = hash & hash; // Convert to 32bit integer
-    }
-    return Math.abs(hash);
-}
-
-
-const { App_Content } = products;
-const { App_Review } = App_Content[0];
-function AppcalculateRating(AppName) {
-    const baseRating = 4.3;
-    const hashValue = simpleHash(AppName);
-    const rangeMin = 0.3, rangeMax = 0.7;
-    const range = rangeMax - rangeMin;
-    const mappedValue = rangeMin + (hashValue % 100 / 100) * range;
-    const finalRating = baseRating + mappedValue;
-    return Number(finalRating.toFixed(1));
-}
-function AppcalculateReviewCount(AppName) {
-    const hashValue = simpleHash(AppName);
-    const minReviewCount = 80, maxReviewCount = 500;
-    const range = maxReviewCount - minReviewCount;
-    const reviewCount = minReviewCount + (hashValue % range);
-    return reviewCount;
-}
-const AppName = products.App_Title;
-const rating = AppcalculateRating('AppName');
-const fullStars = Math.floor(rating);
-const halfStar = rating % 1 !== 0;
-const emptyStars = 5 - fullStars - Number(halfStar);
-
-let selectedStars = 0;
-// 定义一个函数来处理星星的点击事件
-function handleStarClick(index) {
-  // 更新状态变量为点击的星星索引
-  selectedStars = index + 1;
-}
-
-
 ---
 
 
 <!--软件下载模块 -->
 <div class="container mx-auto px-4 py-4">
-	<div class="flex flex-col md:flex-row mb-4">
-		<!-- 占2的图片 -->
-		<div class="mb-4 flex w-full justify-center md:mb-0 md:w-1/6">
-                <Image
-                  src={products.App_Ico}
-                  alt={products.App_Title}
-                  loading="lazy"
-                  style="margin-top: 0.5em;margin-bottom: 0.5em; h-16 w-auto md:h-auto;"
-                  decoding="async"
-                />
-
-		</div>
-		<!-- 占10的内容 -->
-		<div class="w-full md:w-5/6 md:pl-4">
-			<div class="mb-2 text-center md:text-left">
-				<h2 class="text-2xl md:text-3xl font-bold">{products.App_Title}</h2>
-				<span class="text-gray-600">{products.App_Description}</span>
-			</div>
-			<div class="flex flex-col items-center md:flex-row justify-between mr-4">
-				<!-- 四列内容 -->
-				<div class="mt-1">
-					<div class="flex items-center">
-						<span class="mr-2 font-bold">{AppcalculateRating(AppName)}</span>
-						<div class="flex items-center">
-              <div class="flex items-center">
-                {[...Array(fullStars)].map((_, i) => <span key={i} class="text-yellow-500">★</span>)}
-                {halfStar && <span class="text-yellow-500" style="opacity: 0.5">★</span>}
-                {[...Array(emptyStars)].map((_, i) => <span key={i} class="text-gray-400">★</span>)}
-              </div>
-            </div>
-					</div>
-					<div id="vcnt" class="" mt-2">
-						<a href={`${products.App_Url}`} class="underline">
-							<span id="votes_count">{AppcalculateReviewCount(AppName)}</span> votes
-						</a>
-					</div>
-				</div>
-				<span class="mx-2 hidden h-4 border-l border-gray-400 md:block"></span>
-				<div class="mt-1">
-					<span class="mr-2">Your vote:</span>
-					<div class="flex items-center">
-            <span id="star1" class="text-gray-400 cursor-pointer" onclick="changeStarColor(1)">★</span>
-            <span id="star2" class="text-gray-400 cursor-pointer" onclick="changeStarColor(2)">★</span>
-            <span id="star3" class="text-gray-400 cursor-pointer" onclick="changeStarColor(3)">★</span>
-            <span id="star4" class="text-gray-400 cursor-pointer" onclick="changeStarColor(4)">★</span>
-            <span id="star5" class="text-gray-400 cursor-pointer" onclick="changeStarColor(5)">★</span>
-          </div>
-          <script is:inline>
-            function changeStarColor(starIndex) {
-              for (let i = 1; i <= 5; i++) {
-                const star = document.getElementById(`star${i}`);
-                if (i <= starIndex) {
-                  star.classList.remove('text-gray-400');
-                  star.classList.add('text-yellow-500');
-                } else {
-                  star.classList.remove('text-yellow-500');
-                  star.classList.add('text-gray-400');
-                }
-              }
-            }
-          </script>
-				</div>
-				<span class="mx-2 hidden h-4 border-l border-gray-400 md:block"></span>
-				<div class="mt-1">
-					<span class="mr-2">Latest version:</span>
-					<div>
-						<span>{products.App_Version}</span>
-						<a href={`${products.App_Url}`} class="underline">See all</a>
-          
-					</div>
-				</div>
-				<span class="mx-2 hidden h-4 border-l border-gray-400 md:block"></span>
-				<div class="mt-1">
-					<span class="mr-2">Developer:</span>
-					<div>
-						<span class="dev_name">{products.App_Developer}</span>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="navigation-container__navigation bg-blue-100 p-2 rounded-lg md:flex md:justify-between md:items-center">
-		<a href="#review" class="navigation__item block px-8 py-2 rounded hover:bg-blue-800 active:bg-blue-300 scroll bg-blue-900 text-white md:inline-block">Review</a>
-		<a href="#download" class="navigation__item block text-gray-700 px-4 py-2 rounded hover:bg-blue-200 md:inline-block">Download</a>
-		<a href="#comments" class="navigation__item block text-gray-700 px-4 py-2 rounded hover:bg-blue-200 scroll md:inline-block">Comments</a>
-		<a href="#questions" class="navigation__item block text-gray-700 px-4 py-2 rounded hover:bg-blue-200 md:inline-block">
-			<span>Questions &amp; </span>Answers
-		</a>
-	</div>
-	<div class="container mx-auto px-4 py-4">
-    {App_Content.map((content, index) => (
-		<div class="flex flex-wrap -mx-4" key={index}>
-			<!-- 左侧部分 -->
-			<div class="w-full md:w-8/12 px-4">
-				<article class="prose">
-					<!-- 文章内容 -->
-          <div class=" !mt-0 suojin2" set:html={ App_Review }></div>
-					<div class="flex flex-col md:flex-row justify-between space-y-2 md:space-y-0" >
-						<div class="md:w-1/2 mx-2 bg-[#f4f7fa] p-2">
-							<h4 class="bg-green-800 text-white p-3 rounded !mt-2">PROS</h4>
-							<ul>
-								{content.Pros.map((pro, proIndex) => (
-                  <li key={proIndex}>{pro}</li>
-                ))}
-							</ul>
-						</div>
-						<div class="md:w-1/2 mx-2 bg-[#f4f7fa] p-2">
-							<h4 class="bg-red-700 text-white p-3 rounded !mt-2">CONS</h4>
-							<ul>
-								{content.Cons.map((con, conIndex) => (
-                    <li key={conIndex}>{con}</li>
-                 ))}
-							</ul>
-						</div>
-					</div>
-				</article>
-			</div>
-
-			<!-- 右侧部分 -->
-			<div class="w-full md:w-4/12 px-4">
-				<div class="relative">
-					<!-- 产品图片 -->
-          <Image
-          src={products.App_Image}
-          alt={products.App_Title}
-          loading="lazy"
-          style="margin-top: 0.5em;margin-bottom: 0.5em; h-16 w-auto md:h-auto;"
-          decoding="async"
-        />
-        
-					<!-- 下载按钮 -->
-          <Button
+  <div class="app_content">
+    <h2 class="text-2xl md:text-2xl font-bold border-b border-[#d1d9e0b3] pb-[0.3em]">{products.App_Title_Pro}</h2>
+    <div class="w-full px-4">
+      <Image
+       src={products.App_Image}
+       alt={products.App_Title}
+       loading="lazy"
+       style="margin-top: 0.5em;margin-bottom: 0.5em;width: 600px; height: auto;"
+       decoding="async"
+    />
+    </div>
+    <h3 class="text-xl md:text-xl font-bold border-b border-[#d1d9e0b3] pb-[0.3em]">{products.App_Title}</h3>
+    <p class="text-gray-600">{products.App_Description}</p>
+    {products.App_Content.map((content, index) => (
+    <div key={index}>
+    <h4 class="text-lg md:text-lg font-bold border-b border-[#d1d9e0b3] pb-[0.3em]">License Key:</h4>
+     <ul class="text-base">
+      {content.License_Key.map((key, keyIndex) => (
+        <li key={keyIndex}>{key}</li>
+      ))}
+      </ul>
+    <h4 class="text-lg md:text-lg font-bold border-b border-[#d1d9e0b3] pb-[0.3em]">Activation Code:</h4>
+      <ul class="text-base">
+        {content.Activation_Code.map((code, codeIndex) => (
+        <li key={codeIndex}>{code}</li>
+      ))}
+      </ul>
+    <h4 class="text-lg md:text-lg font-bold border-b border-[#d1d9e0b3] pb-[0.3em]">Instructions for Installation:</h4>
+     <ul class="text-base list-decimal">
+      {content.Instructions_for_Installation.map((instruction, instructionIndex) => (
+        <li key={instructionIndex}>{instruction}</li>
+      ))}
+      </ul>
+    </div>
+    ))}
+      <Button
                 variants="btn-secondary"
-                class="mx-auto w-full text-lg bg-[#5195de] hover:bg-[#5195de] text-white font-bold rounded-md px-4 py-6 leading-none no-underline"
+                class="mx-auto text-base bg-[#5195de] hover:bg-[#5195de] text-white font-bold rounded-md px-4 py-4 leading-none no-underline"
                 icon="tabler:download"
                 href={`${products.App_Download_Url}`}
                 text="Download"
               />
-				</div>
-			</div>
-		</div>
-    ))}
-	</div>
-  <div itemscope itemtype="https://schema.org/FAQPage" class="mx-auto mt-8">
-    <h3 class="text-xl font-semibold mb-4">Frequently Asked Questions</h3>
-    {
-      products.qa.map((faq, index) => (
-        <div itemprop="mainEntity" itemscope itemtype="https://schema.org/Question" key={index} class="mb-4">
-          <h5 itemprop="name" class="font-bold text-lg mb-2">
-            {faq.q}
-          </h5>
-          <div itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer">
-            <p itemprop="text">{faq.a}</p>
-          </div>
-        </div>
-      ))
-    }
   </div>
 </div>
