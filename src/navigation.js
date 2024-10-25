@@ -3,6 +3,7 @@ import { config } from './config';
 
 const siteName = config.site.name;
 const homePageUrl = config.site.site;
+const currentYear = new Date().getFullYear();
 export const headerData = {
   links: [
     {
@@ -32,7 +33,7 @@ export const headerData = {
   },
     {
       text: 'About Us',
-      href: '/about',
+      href: '/about/',
     },
   ],
 };
@@ -65,7 +66,7 @@ export const footerData = {
     { ariaLabel: 'Github', icon: 'tabler:brand-github', href: '#' },
   ],
   footNote: `
-    Made by <a class="text-blue-600 underline dark:text-muted" href="${homePageUrl}"> ${siteName}</a> · All rights reserved.
+    Copyright  ©${currentYear} Made by <a class="text-blue-600 underline dark:text-muted" href="${homePageUrl}"> ${siteName}</a>. All rights reserved.
     <br><br><p class="italic  ">All software downloads provided on ${siteName} site are intended for educational and personal use only. Commercial use is strictly prohibited, and we do not take responsibility for any issues arising from unauthorized commercial usage of these downloads. Please ensure compliance with all applicable software licenses and terms.</p>
   `,
 };
