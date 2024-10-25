@@ -66,6 +66,6 @@ export const footerData = {
   ],
   footNote: `
     Made by <a class="text-blue-600 underline dark:text-muted" href="${homePageUrl}"> ${siteName}</a> · All rights reserved.
-    <br><br><p class="italic  ">We are a participant in the Amazon Services LLC Associates Program, an affiliate advertising program designed to provide a means for us to earn commissions by linking to Amazon.com and affiliated sites.</p>
+    <br><br><p class="italic  ">All software downloads provided on ${siteName} site are intended for educational and personal use only. Commercial use is strictly prohibited, and we do not take responsibility for any issues arising from unauthorized commercial usage of these downloads. Please ensure compliance with all applicable software licenses and terms.</p>
   `,
 };
